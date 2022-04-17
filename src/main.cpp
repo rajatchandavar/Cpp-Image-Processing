@@ -1,18 +1,18 @@
 #include "image.h"
 
 int main(){
-    image test("test.jpg");
-    test.write("new.png");
+    image test("images/test.jpg");
+    image gray_avg(test);
 
-    image copy(test);
+    gray_avg.grayscale_avg(); 
+    gray_avg.write("images/gray_avg.png");
 
-    //First row of copy to black
-    for (int i = 0; i < copy.w * copy.channels; ++i){
-        copy.data[i] = 0;
-    }
-    copy.write("copy.png");
+    test.colormask(0,1, 0);
+    test.write("images/Green_test.png");
 
-    image blank(1000,1000,3);
-    blank.write("blank.jpg");
+    image test2("images/diff_test.jpg");
+    image diff(test);
+    diff.diffmap(test2);
+    diff.write("images/diff_result.png");
     return 0;
 }

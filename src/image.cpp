@@ -1,3 +1,6 @@
+#include <algorithm>
+#include <cstdint>
+#include <cstring>
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
@@ -69,3 +72,53 @@ image_type image::getfiletype(const char* filename){
     }
     return png;
 }
+
+// Grayscale
+void image::grayscale_avg(){
+    // r+g+b/3 
+    if (channels < 3){
+        std::cout << "Image is probably Grayscale already\n";
+    }
+    else{
+        for (int i = 0; i < size; i+=channels){
+            int gray = (data[i] + data[i+1] + data[i+2])/3;
+            memset(data+i, gray, 3);
+        }
+    }
+}
+
+//Modifying the Colour channels
+void image::colormask(float r, float g, float b){
+    if (channels < 3){
+        std::cout << "Image is probably Grayscale already\n";
+    }
+    else{
+        for (int i = 0; i < size; i += channels){
+            data[i] *= r;
+            data[i+1] *= g;
+            data[i+2] *= b;
+        }
+    }
+}
+
+//diffmap - comparing 2 images
+
+void image::diffmap(image& img){
+    int compare_width = std::min(w, img.w);
+    int compare_height = std::min(h, img.h);
+    int compare_channels = std::min(channels, img.channels);
+
+    for (uint32_t i = 0; i < compare_height; ++i){
+        for (uint32_t j = 0; j < compare_width; ++j){
+            for (uint8_t k = 0; k < compare_channels; ++k){
+                data[(i*w + j)*channels + k] = BYTE_BOUND(abs(data[(i*w + j)*channels + k] - img.data[(i*img.w + j)*img.channels + k]));
+            }
+        }
+    }
+}
+
+
+
+
+
+
